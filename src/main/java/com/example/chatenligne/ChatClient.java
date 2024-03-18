@@ -1,5 +1,6 @@
 package com.example.chatenligne;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
@@ -16,6 +17,7 @@ public class ChatClient {
         ChatClient client = new ChatClient();
         try {
             client.openConnexion(host, port);
+            client.addPseudo("Erwan");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -27,5 +29,14 @@ public class ChatClient {
         socket = new Socket(adr, port);
         output = new ObjectOutputStream(socket.getOutputStream());
         input = new ObjectInputStream(socket.getInputStream());
+    }
+
+    public void addPseudo(String pseudo) {
+        try {
+            this.output.writeObject(pseudo);
+        }
+        catch(IOException e) {
+            return;
+        }
     }
 }
