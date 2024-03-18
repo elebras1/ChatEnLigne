@@ -9,6 +9,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
 public class ChatController {
+    private ChatClient client;
 
     @FXML
     private ResourceBundle resources;
@@ -36,7 +37,6 @@ public class ChatController {
 
     @FXML
     void actionBoutonConnexion(ActionEvent event) {
-
     }
 
     @FXML
