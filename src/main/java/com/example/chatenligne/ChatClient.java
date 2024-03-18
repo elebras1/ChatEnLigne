@@ -5,7 +5,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 public class ChatClient {
     private Socket socket;
@@ -19,6 +18,7 @@ public class ChatClient {
         try {
             client.openConnexion(host, port);
             client.addPseudo("Erwan");
+            client.addMessage("c'est un message");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -40,6 +40,15 @@ public class ChatClient {
     public void addPseudo(String pseudo) {
         try {
             this.output.writeObject(pseudo);
+        }
+        catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addMessage(String message) {
+        try {
+            this.output.writeObject(message);
         }
         catch(IOException e) {
             e.printStackTrace();

@@ -37,10 +37,10 @@ public class ChatController {
 
     @FXML
     void actionBoutonConnexion(ActionEvent event) throws Exception {
-        String adresseIp = this.entreeMessage.getText();
-        int port = Integer.parseInt(this.entreeMessage.getText());
-        this.client.openConnexion(adresseIp, port);
-        this.labelEtatConnexion = new Label("Connecté");
+        if(!this.entreeAdresseIP.getText().isEmpty() && this.entreePort.getText().isEmpty()) {
+            this.client.openConnexion(this.entreeAdresseIP.getText(), Integer.parseInt(this.entreePort.getText()));
+            this.labelEtatConnexion = new Label("Connecté");
+        }
     }
 
     @FXML
@@ -50,7 +50,10 @@ public class ChatController {
 
     @FXML
     void actionBoutonEnvoyer(ActionEvent event) {
-
+        if(!this.entreePseudo.getText().isEmpty() && !this.entreeMessage.getText().isEmpty()) {
+            this.client.addPseudo(this.entreePseudo.getText());
+            this.client.addMessage(this.entreeMessage.getText());
+        }
     }
 
     @FXML
