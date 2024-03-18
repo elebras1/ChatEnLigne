@@ -50,10 +50,10 @@ public class ChatController {
 
     @FXML
     void actionBoutonEnvoyer(ActionEvent event) {
-        if(!this.entreePseudo.getText().isEmpty() && !this.entreeMessage.getText().isEmpty()) {
+        /*if(!this.entreePseudo.getText().isEmpty() && !this.entreeMessage.getText().isEmpty()) {
             this.client.addPseudo(this.entreePseudo.getText());
-            this.client.addMessage(this.entreeMessage.getText());
-        }
+            //this.client.addMessage(this.entreeMessage.getText());
+        }*/
     }
 
     @FXML

@@ -13,7 +13,7 @@ public class ChatClient {
     private ObjectInputStream input;
 
     public static void main(String[] args) {
-        String host = "localhost";
+        String host = "22HP014";
         int port = 5555;
         ChatClient client = new ChatClient();
         try {
