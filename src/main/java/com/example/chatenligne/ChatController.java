@@ -54,6 +54,9 @@ public class ChatController {
     void actionBoutonEnvoyer(ActionEvent event) {
         if(!this.entreeMessage.getText().isEmpty()) {
             this.client.sendMessage(this.entreePseudo.getText(), this.entreeMessage.getText());
+            if (this.client.getmessage() instanceof Message) {
+                
+            }
         }
     }
 
