@@ -13,14 +13,12 @@ public class ChatClient {
     private ObjectInputStream input;
 
     public static void main(String[] args) {
-        String host = "22HP014";
+        String host = "localhost";
         int port = 5555;
         ChatClient client = new ChatClient();
         try {
             client.openConnexion(host, port);
-            client.addPseudo("Erwan");
-
-            // Créez un thread pour lire les messages du serveur en continu
+            // thread pour lire les messages en continue
             Thread readThread = new Thread(() -> {
                 try {
                     client.readMessages();
@@ -30,10 +28,7 @@ public class ChatClient {
             });
             readThread.start();
 
-            // Envoi de messages
-            client.sendMessage("Bonjour, je suis Erwan!");
-
-            // Vous pouvez ajouter d'autres messages à envoyer
+            client.sendMessage("Erwan", "Bonjour tout le monde");
 
             // client.deconnexion();
         } catch (Exception e) {
@@ -48,19 +43,24 @@ public class ChatClient {
         input = new ObjectInputStream(socket.getInputStream());
     }
 
-    public void addPseudo(String pseudo) throws IOException {
-        output.writeObject(pseudo);
-    }
-
-    public void sendMessage(String message) throws IOException {
-        output.writeObject(message);
+    public void sendMessage(String pseudo, String message) {
+        Message msg;
+        if(pseudo.isEmpty()) {
+            msg = new Message(message);
+        } else {
+            msg = new Message(pseudo, message);
+        }
+        try {
+            output.writeObject(msg);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void readMessages() throws IOException, ClassNotFoundException {
         while (true) {
-            Object received = input.readObject();
-            if (received instanceof String) {
-                String message = (String) received;
+            Object message = this.input.readObject();
+            if (message instanceof String) {
                 System.out.println("Message reçu : " + message);
             }
         }

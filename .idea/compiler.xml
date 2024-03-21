@@ -9,8 +9,5 @@
         <module name="ChatEnLigne" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="ChatEnLigne" target="18" />
-    </bytecodeTargetLevel>
   </component>
 </project>

@@ -1,6 +1,8 @@
 package com.example.chatenligne;
 
-public class Message {
+import java.io.Serializable;
+
+public class Message implements Serializable {
     private String auteur;
     private String contenu;
 
@@ -10,19 +12,8 @@ public class Message {
         this.contenu = contenu;
     }
 
-    public String getAuteur() {
-        return auteur;
-    }
-
-    public void setAuteur(String auteur) {
-        this.auteur = auteur;
-    }
-
-    public String getContenu() {
-        return contenu;
-    }
-
-    public void setContenu(String contenu) {
+    public Message(String contenu) {
+        this.auteur = "Anonyme";
         this.contenu = contenu;
     }
 }
