@@ -1,5 +1,6 @@
 package com.example.chatenligne;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
@@ -8,7 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
-public class ChatController {
+public class ChatController extends ChatClient {
     private final ChatClient client = new ChatClient();
 
     @FXML
@@ -40,7 +41,7 @@ public class ChatController {
         if(!this.entreeAdresseIP.getText().isEmpty() && !this.entreePort.getText().isEmpty()) {
             this.client.openConnexion(this.entreeAdresseIP.getText(), Integer.parseInt(this.entreePort.getText()));
             this.labelEtatConnexion.setText("Connecté");
-            this.client.startReadMessages();
+            this.startReadMessages();
         }
     }
 
@@ -54,9 +55,6 @@ public class ChatController {
     void actionBoutonEnvoyer(ActionEvent event) {
         if(!this.entreeMessage.getText().isEmpty()) {
             this.client.sendMessage(this.entreePseudo.getText(), this.entreeMessage.getText());
-            if (this.client.getmessage() instanceof Message) {
-                
-            }
         }
     }
 
@@ -64,5 +62,14 @@ public class ChatController {
     void initialize() {
 
     }
+
+    public void readMessages() throws IOException, ClassNotFoundException {
+        while(true) {
+            Message message = (Message) client.getInput().readObject();
+            this.areaDiscussion.appendText(message.toString() + "\n");
+        }
+    }
+
+
 
 }

@@ -77,6 +77,10 @@ public class ChatClient {
         }
     }
 
+    public ObjectInputStream getInput(){
+        return this.input;
+    }
+
     public void deconnexion() {
         try {
             if (this.output != null)
