@@ -37,7 +37,7 @@ public class ChatController {
 
     @FXML
     void actionBoutonConnexion(ActionEvent event) throws Exception {
-        if(!this.entreeAdresseIP.getText().isEmpty() && this.entreePort.getText().isEmpty()) {
+        if(!this.entreeAdresseIP.getText().isEmpty() && !this.entreePort.getText().isEmpty()) {
             this.client.openConnexion(this.entreeAdresseIP.getText(), Integer.parseInt(this.entreePort.getText()));
             this.labelEtatConnexion = new Label("Connecté");
         }

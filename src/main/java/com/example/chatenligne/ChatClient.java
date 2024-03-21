@@ -68,12 +68,12 @@ public class ChatClient {
 
     public void deconnexion() {
         try {
-            if (output != null)
-                output.close();
-            if (input != null)
-                input.close();
-            if (socket != null && !socket.isClosed())
-                socket.close();
+            if (this.output != null)
+                this.output.close();
+            if (this.input != null)
+                this.input.close();
+            if (this.socket != null && !this.socket.isClosed())
+                this.socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
