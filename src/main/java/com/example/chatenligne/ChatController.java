@@ -5,9 +5,6 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.URL;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import javafx.application.Platform;
@@ -19,9 +16,6 @@ import javafx.scene.control.TextField;
 
 public class ChatController extends ChatClient {
     private final ChatClient client = new ChatClient();
-
-    protected MulticastSocket socket = null;
-    protected byte[] buf = new byte[256];
 
     @FXML
     private ResourceBundle resources;
@@ -86,7 +80,7 @@ public class ChatController extends ChatClient {
                     });
 
                     readThread.start();
-                    MulticastPublisher mp = new MulticastPublisher(); // Fournir la définition de MulticastPublisher
+                    MulticastPublisher mp = new MulticastPublisher();
                     mp.multicast(this.entreeAdresseIP.getText() + ":" + this.entreePort.getText());
                 }
             } catch (Exception e) {
@@ -106,7 +100,7 @@ public class ChatController extends ChatClient {
 
     @FXML
     void actionBoutonEnvoyer(ActionEvent event) {
-        if(!this.entreeMessage.getText().isEmpty()) {
+        if(!this.entreeMessage.getText().isEmpty() && this.estConnecte) {
             this.client.sendMessage(this.entreePseudo.getText(), this.entreeMessage.getText());
         }
     }
