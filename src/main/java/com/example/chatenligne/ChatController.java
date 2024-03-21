@@ -57,16 +57,14 @@ public class ChatController extends ChatClient {
                     InetAddress group = InetAddress.getByName("224.0.0.0");
                     socket.joinGroup(group);
 
-                    // Créez un nouveau thread de lecture pour chaque connexion
                     Thread readThread = new Thread(() -> {
                         try {
                             while (true) {
                                 DatagramPacket packet = new DatagramPacket(new byte[256], 256);
                                 socket.receive(packet);
                                 String received = new String(packet.getData(), 0, packet.getLength());
-                                System.out.println("Message reçu : " + received);
                                 String ht[] = received.split(":");
-                                if (ht[0].equals(received.substring(0, 8))) {
+                                if (ht[0].equals("localhost")) {
                                     try {
                                         this.client.openConnexion(ht[0], Integer.parseInt(ht[1]));
                                         this.estConnecte = true;
@@ -81,7 +79,6 @@ public class ChatController extends ChatClient {
                         } catch (IOException e) {
                             e.printStackTrace();
                         } finally {
-                            // Fermez le socket lorsque la connexion est terminée
                             if (!socket.isClosed()) {
                                 socket.close();
                             }
