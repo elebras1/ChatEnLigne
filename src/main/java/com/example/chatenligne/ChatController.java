@@ -42,6 +42,10 @@ public class ChatController extends ChatClient {
     void actionBoutonConnexion(ActionEvent event) {
         try {
             if(!this.entreeAdresseIP.getText().isEmpty() && !this.entreePort.getText().isEmpty()) {
+                MulticastPublisher mp=new MulticastPublisher();
+                MulticastReceiver mr=new MulticastReceiver();
+                mr.start();
+                mp.multicast(this.entreeAdresseIP.getText()+":"+this.entreePort.getText());
                 this.client.openConnexion(this.entreeAdresseIP.getText(), Integer.parseInt(this.entreePort.getText()));
                 this.labelEtatConnexion.setText("Connecté");
                 this.startReadMessages();

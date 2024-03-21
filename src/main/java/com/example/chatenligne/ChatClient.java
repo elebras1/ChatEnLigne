@@ -3,7 +3,10 @@ package com.example.chatenligne;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.MulticastSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -48,7 +51,7 @@ public class ChatClient {
         readThread.start();
     }
 
-    public void readMessages() throws ClassNotFoundException{
+    public void readMessages() throws ClassNotFoundException {
         while (true) {
             try {
                 Object message = this.input.readObject();
@@ -76,6 +79,64 @@ public class ChatClient {
                 this.socket.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public class MulticastPublisher {
+        private DatagramSocket socket;
+        private InetAddress group;
+        private byte[] buf;
+
+        public void multicast(String multicastMessage) throws IOException {
+            socket = new DatagramSocket();
+            group = InetAddress.getByName("230.0.0.0");
+            buf = multicastMessage.getBytes();
+
+            DatagramPacket packet = new DatagramPacket(buf, buf.length, group, 4446);
+            socket.send(packet);
+            socket.close();
+        }
+    }
+
+    public class MulticastReceiver extends Thread {
+        protected MulticastSocket socket = null;
+        protected byte[] buf = new byte[256];
+
+        public void run() {
+            try {
+                socket = new MulticastSocket(4446);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            InetAddress group = null;
+            try {
+                group = InetAddress.getByName("230.0.0.0");
+            } catch (UnknownHostException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                socket.joinGroup(group);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            while (true) {
+                DatagramPacket packet = new DatagramPacket(buf, buf.length);
+                try {
+                    socket.receive(packet);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                String received = new String(
+                        packet.getData(), 0, packet.getLength());
+                System.out.println("Message reçu : " + received);
+                break;
+            }
+            try {
+                socket.leaveGroup(group);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            socket.close();
         }
     }
 }
