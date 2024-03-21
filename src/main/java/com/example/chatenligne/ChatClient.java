@@ -11,11 +11,6 @@ public class ChatClient {
     private Socket socket;
     private ObjectOutputStream output;
     private ObjectInputStream input;
-    private Object message;
-    
-    public Object getmessage(){
-        return this.message;
-    }
     public static void main(String[] args) {
         String host = "localhost";
         int port = 5555;
@@ -73,7 +68,7 @@ public class ChatClient {
 
     public void readMessages() throws IOException, ClassNotFoundException {
         while (true) {
-            message = this.input.readObject();
+            Object message = this.input.readObject();
         }
     }
 

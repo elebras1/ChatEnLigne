@@ -62,11 +62,13 @@ public class ChatController extends ChatClient {
     void initialize() {
 
     }
-
+    @Override
     public void readMessages() throws IOException, ClassNotFoundException {
         while(true) {
-            Message message = (Message) client.getInput().readObject();
-            this.areaDiscussion.appendText(message.toString() + "\n");
+            Object message = client.getInput().readObject();
+            if(message instanceof Message){
+                this.areaDiscussion.appendText(message.toString() + "\n");
+            }
         }
     }
 
