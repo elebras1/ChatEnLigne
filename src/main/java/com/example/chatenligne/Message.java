@@ -16,4 +16,16 @@ public class Message implements Serializable {
         this.auteur = "Anonyme";
         this.contenu = contenu;
     }
+
+    public String getAuteur() {
+        return this.auteur;
+    }
+
+    public String getContenu() {
+        return this.contenu;
+    }
+
+    public String toString() {
+        return this.auteur + " : " + this.contenu;
+    }
 }

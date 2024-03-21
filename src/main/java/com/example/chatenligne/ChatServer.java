@@ -22,10 +22,10 @@ public class ChatServer {
 
             while (true) {
                 Socket socket = serverSocket.accept();
-                System.out.println("New client connected: " + socket.getInetAddress().getHostAddress());
+                System.out.println("Nouveau client connecté: " + socket.getInetAddress().getHostAddress());
 
                 ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
-                clientsOutputStreams.add(output);
+                this.clientsOutputStreams.add(output);
 
                 Thread clientHandler = new Thread(new ClientHandler(socket));
                 clientHandler.start();
@@ -42,7 +42,7 @@ public class ChatServer {
         public ClientHandler(Socket clientSocket) {
             this.clientSocket = clientSocket;
             try {
-                input = new ObjectInputStream(clientSocket.getInputStream());
+                this.input = new ObjectInputStream(clientSocket.getInputStream());
             } catch (IOException e) {
                 System.err.println(e);
             }
@@ -52,10 +52,10 @@ public class ChatServer {
         public void run() {
             try {
                 while (true) {
-                    String message = (String) input.readObject();
+                    Message message = (Message) this.input.readObject();
                     if (message == null) {
                         // Client disconnected, close the connection and break the loop
-                        clientSocket.close();
+                        this.clientSocket.close();
                         break;
                     }
                     System.out.println("Message received: " + message);
@@ -66,14 +66,14 @@ public class ChatServer {
             } finally {
                 // Remove client's output stream when client disconnects
                 try {
-                    clientsOutputStreams.remove(clientSocket.getOutputStream());
+                    clientsOutputStreams.remove(this.clientSocket.getOutputStream());
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
             }
         }
 
-        private void broadcastMessage(String message) {
+        private void broadcastMessage(Message message) {
             for (ObjectOutputStream clientOutput : clientsOutputStreams) {
                 try {
                     clientOutput.writeObject(message);

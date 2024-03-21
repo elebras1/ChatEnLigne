@@ -39,13 +39,15 @@ public class ChatController {
     void actionBoutonConnexion(ActionEvent event) throws Exception {
         if(!this.entreeAdresseIP.getText().isEmpty() && !this.entreePort.getText().isEmpty()) {
             this.client.openConnexion(this.entreeAdresseIP.getText(), Integer.parseInt(this.entreePort.getText()));
-            this.labelEtatConnexion = new Label("Connecté");
+            this.labelEtatConnexion.setText("Connecté");
+            this.client.startReadMessages();
         }
     }
 
     @FXML
     void actionBoutonDeconnexion(ActionEvent event) {
         this.client.deconnexion();
+        this.labelEtatConnexion.setText("Déconnecté");
     }
 
     @FXML

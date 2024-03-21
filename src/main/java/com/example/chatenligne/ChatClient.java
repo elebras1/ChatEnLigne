@@ -30,7 +30,6 @@ public class ChatClient {
 
             client.sendMessage("Erwan", "Bonjour tout le monde");
 
-            // client.deconnexion();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -57,10 +56,21 @@ public class ChatClient {
         }
     }
 
+    public void startReadMessages() {
+        Thread readThread = new Thread(() -> {
+            try {
+                this.readMessages();
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        });
+        readThread.start();
+    }
+
     public void readMessages() throws IOException, ClassNotFoundException {
         while (true) {
             Object message = this.input.readObject();
-            if (message instanceof String) {
+            if (message instanceof Message) {
                 System.out.println("Message reçu : " + message);
             }
         }
