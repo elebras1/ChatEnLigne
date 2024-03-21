@@ -65,8 +65,8 @@ public class ChatController extends ChatClient {
                                 socket.receive(packet);
                                 String received = new String(packet.getData(), 0, packet.getLength());
                                 System.out.println("Message reçu : " + received);
-                                if ("localhost:5555".equals(received)) {
-                                    String ht[] = received.split(":");
+                                String ht[] = received.split(":");
+                                if (ht[0].equals(received.substring(0, 8))) {
                                     try {
                                         this.client.openConnexion(ht[0], Integer.parseInt(ht[1]));
                                         this.estConnecte = true;

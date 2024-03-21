@@ -18,13 +18,14 @@ public class ChatServer {
 
     public static void main(String[] args) {
         ChatServer sv = new ChatServer();
-        sv.startsv("5555");
+        sv.startsv(args[0]);
     }
 
     public void startsv(String port) {
         try {
             ServerSocket serverSocket = new ServerSocket(Integer.parseInt(port));
             MulticastReceiver mulR = new MulticastReceiver();
+            mulR.setPort(Integer.parseInt(port));
             mulR.start();
 
             while (true) {

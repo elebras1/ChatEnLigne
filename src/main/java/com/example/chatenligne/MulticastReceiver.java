@@ -6,7 +6,8 @@ import java.io.IOException;
 public class MulticastReceiver extends Thread {
     protected MulticastSocket socket = null;
     protected byte[] buf = new byte[256];
-
+    private int port;
+    
     public void run() {
         try {
             socket = new MulticastSocket(4446);
@@ -38,11 +39,14 @@ public class MulticastReceiver extends Thread {
             if ("224.0.0.0:4446".equals(received)) {
                 MulticastPublisher mulP = new MulticastPublisher();
                 try {
-                    mulP.multicast("localhost:5555");
+                    mulP.multicast("localhost:"+port);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }
+    }
+    public void setPort(int port) {
+        this.port = port;
     }
 }
