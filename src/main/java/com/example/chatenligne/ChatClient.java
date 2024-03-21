@@ -11,27 +11,9 @@ public class ChatClient {
     private Socket socket;
     private ObjectOutputStream output;
     private ObjectInputStream input;
+
     public static void main(String[] args) {
-        String host = "localhost";
-        int port = 5555;
-        ChatClient client = new ChatClient();
-        try {
-            client.openConnexion(host, port);
-            // thread pour lire les messages en continue
-            Thread readThread = new Thread(() -> {
-                try {
-                    client.readMessages();
-                } catch (IOException | ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
-            });
-            readThread.start();
 
-            client.sendMessage("Erwan", "Bonjour tout le monde");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public void openConnexion(String host, int port) throws IOException {
@@ -43,7 +25,7 @@ public class ChatClient {
 
     public void sendMessage(String pseudo, String message) {
         Message msg;
-        if(pseudo.isEmpty()) {
+        if (pseudo.isEmpty()) {
             msg = new Message(message);
         } else {
             msg = new Message(pseudo, message);
@@ -68,11 +50,19 @@ public class ChatClient {
 
     public void readMessages() throws IOException, ClassNotFoundException {
         while (true) {
-            Object message = this.input.readObject();
+            try {
+                Object message = this.input.readObject();
+                if (message == null) {
+                    System.out.println("Le serveur s'est déconnecté.");
+                }
+            } catch (IOException e) {
+                System.out.println("Erreur de lecture depuis le serveur: " + e.getMessage());
+                break;
+            }
         }
     }
 
-    public ObjectInputStream getInput(){
+    public ObjectInputStream getInput() {
         return this.input;
     }
 
