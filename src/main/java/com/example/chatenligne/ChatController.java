@@ -39,11 +39,15 @@ public class ChatController extends ChatClient {
     private Label labelEtatConnexion;
 
     @FXML
-    void actionBoutonConnexion(ActionEvent event) throws Exception {
-        if(!this.entreeAdresseIP.getText().isEmpty() && !this.entreePort.getText().isEmpty()) {
-            this.client.openConnexion(this.entreeAdresseIP.getText(), Integer.parseInt(this.entreePort.getText()));
-            this.labelEtatConnexion.setText("Connecté");
-            this.startReadMessages();
+    void actionBoutonConnexion(ActionEvent event) {
+        try {
+            if(!this.entreeAdresseIP.getText().isEmpty() && !this.entreePort.getText().isEmpty()) {
+                this.client.openConnexion(this.entreeAdresseIP.getText(), Integer.parseInt(this.entreePort.getText()));
+                this.labelEtatConnexion.setText("Connecté");
+                this.startReadMessages();
+            }
+        } catch(Exception e) {
+            this.labelEtatConnexion.setText("Erreur de connexion");
         }
     }
 
@@ -68,15 +72,15 @@ public class ChatController extends ChatClient {
     public void readMessages() throws ClassNotFoundException{
         while(true) {
             try {
-                Object message = client.getInput().readObject();
+                Object message = this.client.getInput().readObject();
                 if (message == null) {
-                    Platform.runLater(() -> labelEtatConnexion.setText("deconnexion"));
+                    Platform.runLater(() -> this.labelEtatConnexion.setText("deconnexion"));
                 }
                 if(message instanceof Message){
-                    Platform.runLater(() -> areaDiscussion.appendText(message.toString() + "\n"));
+                    Platform.runLater(() -> this.areaDiscussion.appendText(message + "\n"));
                 }
             }catch (IOException e) {
-                Platform.runLater(() -> labelEtatConnexion.setText("deconnexion"));
+                Platform.runLater(() -> this.labelEtatConnexion.setText("deconnexion"));
                 break;
             }
         }
