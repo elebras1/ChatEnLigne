@@ -55,7 +55,7 @@ public class ChatController extends ChatClient {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-                this.labelEtatConnexion.setText("Connecté");
+                Platform.runLater(() -> this.labelEtatConnexion.setText("Connecté"));
                 this.startReadMessages();
                 break;
             }
