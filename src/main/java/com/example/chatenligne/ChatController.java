@@ -3,6 +3,8 @@ package com.example.chatenligne;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -68,13 +70,13 @@ public class ChatController extends ChatClient {
             try {
                 Object message = client.getInput().readObject();
                 if (message == null) {
-                    this.labelEtatConnexion.setText("deconnexion");
+                    Platform.runLater(() -> labelEtatConnexion.setText("deconnexion"));
                 }
                 if(message instanceof Message){
-                    this.areaDiscussion.appendText(message.toString() + "\n");
+                    Platform.runLater(() -> areaDiscussion.appendText(message.toString() + "\n"));
                 }
             }catch (IOException e) {
-                this.labelEtatConnexion.setText("deconnexion");
+                Platform.runLater(() -> labelEtatConnexion.setText("deconnexion"));
                 break;
             }
         }

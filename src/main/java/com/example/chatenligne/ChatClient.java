@@ -41,14 +41,14 @@ public class ChatClient {
         Thread readThread = new Thread(() -> {
             try {
                 this.readMessages();
-            } catch (IOException | ClassNotFoundException e) {
+            } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
         });
         readThread.start();
     }
 
-    public void readMessages() throws IOException, ClassNotFoundException {
+    public void readMessages() throws ClassNotFoundException{
         while (true) {
             try {
                 Object message = this.input.readObject();
