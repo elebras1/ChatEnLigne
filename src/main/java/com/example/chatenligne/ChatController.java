@@ -49,7 +49,8 @@ public class ChatController extends ChatClient {
                     packet.getData(), 0, packet.getLength());
             System.out.println("Message reçu : " + received);
             if ("localhost:5555".equals(received)) {
-                this.client.openConnexion(this.entreeAdresseIP.getText(), Integer.parseInt(this.entreePort.getText()));
+                String ht[]=received.split(":");
+                this.client.openConnexion(ht[0], Integer.parseInt(ht[1]));
                 this.labelEtatConnexion.setText("Connecté");
                 this.startReadMessages();
                 break;
