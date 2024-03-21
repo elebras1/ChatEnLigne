@@ -1,10 +1,7 @@
 package com.example.chatenligne;
 
-import java.net.DatagramPacket;
-import java.net.InetAddress;
+import java.net.*;
 import java.io.IOException;
-import java.net.MulticastSocket;
-import java.net.UnknownHostException;
 
 public class MulticastReceiver extends Thread {
     protected MulticastSocket socket = null;
@@ -13,6 +10,7 @@ public class MulticastReceiver extends Thread {
     public void run() {
         try {
             socket = new MulticastSocket(4446);
+            //socket.setOption(StandardSocketOptions.IP_MULTICAST_LOOP, false);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -44,14 +42,7 @@ public class MulticastReceiver extends Thread {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                break;
             }
         }
-        try {
-            socket.leaveGroup(group);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        socket.close();
     }
 }
