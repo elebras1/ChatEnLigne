@@ -50,55 +50,57 @@ public class ChatController extends ChatClient {
 
     @FXML
     void actionBoutonConnexion(ActionEvent event) {
-        try {
-            if (!this.entreeAdresseIP.getText().isEmpty() && !this.entreePort.getText().isEmpty()) {
-                MulticastSocket socket = new MulticastSocket(4446);
-                InetAddress group = InetAddress.getByName("224.0.0.0");
-                socket.joinGroup(group);
+        if(!this.estConnecte) {
+            try {
+                if (!this.entreeAdresseIP.getText().isEmpty() && !this.entreePort.getText().isEmpty()) {
+                    MulticastSocket socket = new MulticastSocket(4446);
+                    InetAddress group = InetAddress.getByName("224.0.0.0");
+                    socket.joinGroup(group);
 
-                // Créez un nouveau thread de lecture pour chaque connexion
-                Thread readThread = new Thread(() -> {
-                    try {
-                        while (true) {
-                            DatagramPacket packet = new DatagramPacket(new byte[256], 256);
-                            socket.receive(packet);
-                            String received = new String(packet.getData(), 0, packet.getLength());
-                            System.out.println("Message reçu : " + received);
-                            if ("localhost:5555".equals(received)) {
-                                String ht[] = received.split(":");
-                                try {
-                                    this.client.openConnexion(ht[0], Integer.parseInt(ht[1]));
-                                    this.estConnecte = true;
-                                } catch (NumberFormatException | IOException e) {
-                                    e.printStackTrace();
+                    // Créez un nouveau thread de lecture pour chaque connexion
+                    Thread readThread = new Thread(() -> {
+                        try {
+                            while (true) {
+                                DatagramPacket packet = new DatagramPacket(new byte[256], 256);
+                                socket.receive(packet);
+                                String received = new String(packet.getData(), 0, packet.getLength());
+                                System.out.println("Message reçu : " + received);
+                                if ("localhost:5555".equals(received)) {
+                                    String ht[] = received.split(":");
+                                    try {
+                                        this.client.openConnexion(ht[0], Integer.parseInt(ht[1]));
+                                        this.estConnecte = true;
+                                    } catch (NumberFormatException | IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                    Platform.runLater(() -> this.labelEtatConnexion.setText("Connecté"));
+                                    this.startReadMessages();
+                                    break;
                                 }
-                                Platform.runLater(() -> this.labelEtatConnexion.setText("Connecté"));
-                                this.startReadMessages();
-                                break;
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } finally {
+                            // Fermez le socket lorsque la connexion est terminée
+                            if (!socket.isClosed()) {
+                                socket.close();
                             }
                         }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } finally {
-                        // Fermez le socket lorsque la connexion est terminée
-                        if (!socket.isClosed()) {
-                            socket.close();
-                        }
-                    }
-                });
+                    });
 
-                readThread.start();
-                MulticastPublisher mp = new MulticastPublisher(); // Fournir la définition de MulticastPublisher
-                mp.multicast(this.entreeAdresseIP.getText() + ":" + this.entreePort.getText());
+                    readThread.start();
+                    MulticastPublisher mp = new MulticastPublisher(); // Fournir la définition de MulticastPublisher
+                    mp.multicast(this.entreeAdresseIP.getText() + ":" + this.entreePort.getText());
+                }
+            } catch (Exception e) {
+                this.labelEtatConnexion.setText("Erreur de connexion");
             }
-        } catch (Exception e) {
-            this.labelEtatConnexion.setText("Erreur de connexion");
         }
     }
 
     @FXML
     void actionBoutonDeconnexion(ActionEvent event) {
-        if(!this.estConnecte) {
+        if(this.estConnecte) {
             this.client.deconnexion();
             this.estConnecte = false;
             this.labelEtatConnexion.setText("Déconnecté");
