@@ -1,7 +1,11 @@
 package com.example.chatenligne;
 
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.ResourceBundle;
 
 import javafx.application.Platform;
@@ -13,6 +17,51 @@ import javafx.scene.control.TextField;
 
 public class ChatController extends ChatClient {
     private final ChatClient client = new ChatClient();
+
+    protected MulticastSocket socket = null;
+    protected byte[] buf = new byte[256];
+
+    public void received() throws NumberFormatException, IOException {
+        try {
+            socket = new MulticastSocket(4446);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        InetAddress group = null;
+        try {
+            group = InetAddress.getByName("230.0.0.0");
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            socket.joinGroup(group);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        while (true) {
+            DatagramPacket packet = new DatagramPacket(buf, buf.length);
+            try {
+                socket.receive(packet);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            String received = new String(
+                    packet.getData(), 0, packet.getLength());
+            System.out.println("Message reçu : " + received);
+            if ("localhost:5555".equals(received)) {
+                this.client.openConnexion(this.entreeAdresseIP.getText(), Integer.parseInt(this.entreePort.getText()));
+                this.labelEtatConnexion.setText("Connecté");
+                this.startReadMessages();
+                break;
+            }
+        }
+        try {
+            socket.leaveGroup(group);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        socket.close();
+    }
 
     @FXML
     private ResourceBundle resources;
@@ -46,9 +95,7 @@ public class ChatController extends ChatClient {
                 MulticastReceiver mr=new MulticastReceiver();
                 mr.start();
                 mp.multicast(this.entreeAdresseIP.getText()+":"+this.entreePort.getText());
-                this.client.openConnexion(this.entreeAdresseIP.getText(), Integer.parseInt(this.entreePort.getText()));
-                this.labelEtatConnexion.setText("Connecté");
-                this.startReadMessages();
+                
             }
         } catch(Exception e) {
             this.labelEtatConnexion.setText("Erreur de connexion");
