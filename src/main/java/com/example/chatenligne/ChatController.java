@@ -20,8 +20,7 @@ public class ChatController extends ChatClient {
 
     protected MulticastSocket socket = null;
     protected byte[] buf = new byte[256];
-
-    public void received() throws NumberFormatException, IOException {
+    Thread readThread = new Thread(() ->{
         try {
             socket = new MulticastSocket(4446);
         } catch (IOException e) {
@@ -29,7 +28,7 @@ public class ChatController extends ChatClient {
         }
         InetAddress group = null;
         try {
-            group = InetAddress.getByName("230.0.0.0");
+            group = InetAddress.getByName("224.0.0.0");
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         }
@@ -50,7 +49,12 @@ public class ChatController extends ChatClient {
             System.out.println("Message reçu : " + received);
             if ("localhost:5555".equals(received)) {
                 String ht[]=received.split(":");
-                this.client.openConnexion(ht[0], Integer.parseInt(ht[1]));
+                try {
+                    this.client.openConnexion(ht[0], Integer.parseInt(ht[1]));
+                } catch (NumberFormatException | IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
                 this.labelEtatConnexion.setText("Connecté");
                 this.startReadMessages();
                 break;
@@ -62,7 +66,8 @@ public class ChatController extends ChatClient {
             throw new RuntimeException(e);
         }
         socket.close();
-    }
+    });
+    
 
     @FXML
     private ResourceBundle resources;
@@ -93,10 +98,8 @@ public class ChatController extends ChatClient {
         try {
             if(!this.entreeAdresseIP.getText().isEmpty() && !this.entreePort.getText().isEmpty()) {
                 MulticastPublisher mp=new MulticastPublisher();
-                MulticastReceiver mr=new MulticastReceiver();
-                mr.start();
+                this.readThread.start();
                 mp.multicast(this.entreeAdresseIP.getText()+":"+this.entreePort.getText());
-                
             }
         } catch(Exception e) {
             this.labelEtatConnexion.setText("Erreur de connexion");

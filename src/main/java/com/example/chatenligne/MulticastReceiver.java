@@ -18,7 +18,7 @@ public class MulticastReceiver extends Thread {
         }
         InetAddress group = null;
         try {
-            group = InetAddress.getByName("230.0.0.0");
+            group = InetAddress.getByName("224.0.0.0");
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         }
@@ -37,7 +37,7 @@ public class MulticastReceiver extends Thread {
             String received = new String(
                     packet.getData(), 0, packet.getLength());
             System.out.println("Message reçu : " + received);
-            if ("230.0.0.0:4446".equals(received)) {
+            if ("224.0.0.0:4446".equals(received)) {
                 MulticastPublisher mulP = new MulticastPublisher();
                 try {
                     mulP.multicast("localhost:5555");
