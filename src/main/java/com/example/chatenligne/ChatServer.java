@@ -3,8 +3,7 @@ package com.example.chatenligne;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +13,11 @@ public class ChatServer {
     public static void main(String[] args) {
         ChatServer sv = new ChatServer();
         sv.startsv("5555");
+        try {
+            sv.listenMulticastRequest("230.0.0.0", 4446, "localhost", 5555);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void startsv(String port) {
@@ -32,6 +36,20 @@ public class ChatServer {
             }
         } catch (IOException e) {
             System.err.println(e);
+        }
+    }
+
+    public void listenMulticastRequest(String multicastAddress, int multicastPort, String serverAddress, int serverPort) throws IOException {
+        InetAddress group = InetAddress.getByName(multicastAddress);
+        MulticastSocket multicastSocket = new MulticastSocket(multicastPort);
+        multicastSocket.joinGroup(group);
+        byte[] buffer = new byte[1000];
+        while (true) {
+            DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+            multicastSocket.receive(packet);
+            String response = serverAddress + ":" + serverPort;
+            DatagramPacket responsePacket = new DatagramPacket(response.getBytes(), response.length(), packet.getAddress(), packet.getPort());
+            multicastSocket.send(responsePacket);
         }
     }
 

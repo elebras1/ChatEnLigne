@@ -3,9 +3,7 @@ package com.example.chatenligne;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.net.*;
 
 public class ChatClient {
     private Socket socket;
@@ -14,6 +12,17 @@ public class ChatClient {
 
     public static void main(String[] args) {
 
+    }
+
+    public void sendMulticastRequest(String multicastAddress, int multicastPort) throws IOException {
+        InetAddress group = InetAddress.getByName(multicastAddress);
+        MulticastSocket multicastSocket = new MulticastSocket(multicastPort);
+        multicastSocket.joinGroup(group);
+        String request = "Connection request";
+        DatagramPacket packet = new DatagramPacket(request.getBytes(), request.length(), group, multicastPort);
+        multicastSocket.send(packet);
+        multicastSocket.leaveGroup(group);
+        multicastSocket.close();
     }
 
     public void openConnexion(String host, int port) throws IOException {

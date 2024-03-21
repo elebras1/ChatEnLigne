@@ -42,7 +42,7 @@ public class ChatController extends ChatClient {
     void actionBoutonConnexion(ActionEvent event) {
         try {
             if(!this.entreeAdresseIP.getText().isEmpty() && !this.entreePort.getText().isEmpty()) {
-                this.client.openConnexion(this.entreeAdresseIP.getText(), Integer.parseInt(this.entreePort.getText()));
+                this.client.sendMulticastRequest(this.entreeAdresseIP.getText(), Integer.parseInt(this.entreePort.getText()));
                 this.labelEtatConnexion.setText("Connecté");
                 this.startReadMessages();
             }
