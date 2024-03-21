@@ -46,8 +46,7 @@ public class ChatController extends ChatClient {
 
     @FXML
     private Label labelEtatConnexion;
-
-    private List<Thread> readThreads = new ArrayList<>();
+    private boolean estConnecte = false;
 
     @FXML
     void actionBoutonConnexion(ActionEvent event) {
@@ -69,6 +68,7 @@ public class ChatController extends ChatClient {
                                 String ht[] = received.split(":");
                                 try {
                                     this.client.openConnexion(ht[0], Integer.parseInt(ht[1]));
+                                    this.estConnecte = true;
                                 } catch (NumberFormatException | IOException e) {
                                     e.printStackTrace();
                                 }
@@ -81,16 +81,13 @@ public class ChatController extends ChatClient {
                         e.printStackTrace();
                     } finally {
                         // Fermez le socket lorsque la connexion est terminée
-                        if (socket != null && !socket.isClosed()) {
+                        if (!socket.isClosed()) {
                             socket.close();
                         }
                     }
                 });
 
-                // Ajoutez le thread de lecture à la liste
-                readThreads.add(readThread);
                 readThread.start();
-
                 MulticastPublisher mp = new MulticastPublisher(); // Fournir la définition de MulticastPublisher
                 mp.multicast(this.entreeAdresseIP.getText() + ":" + this.entreePort.getText());
             }
@@ -101,8 +98,11 @@ public class ChatController extends ChatClient {
 
     @FXML
     void actionBoutonDeconnexion(ActionEvent event) {
-        this.client.deconnexion();
-        this.labelEtatConnexion.setText("Déconnecté");
+        if(!this.estConnecte) {
+            this.client.deconnexion();
+            this.estConnecte = false;
+            this.labelEtatConnexion.setText("Déconnecté");
+        }
     }
 
     @FXML
